@@ -1,7 +1,4 @@
-"""Games, or Adversarial Search. (Chapters 6)
-
-"""
-
+"""Games, or Adversarial Search. (Chapters 6)"""
 from utils import *
 import random
 
@@ -71,6 +68,7 @@ def alphabeta_full_search(state, game):
                            lambda ((a, s)): min_value(s, -infinity, infinity))
     return action
 
+
 def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
@@ -79,11 +77,10 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
 
     def max_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
-   #         print ' Valore ', state.board, 'como ', eval_fn(state)
             return eval_fn(state)
         v = -infinity
         for (a, s) in game.successors(state):
-            v = max(v, min_value(s, alpha, beta, depth+1))
+            v = max(v, min_value(s, alpha, beta, depth + 1))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
@@ -91,11 +88,10 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
 
     def min_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
-  #          print ' Valore ', state.board, 'como ', eval_fn(state)
             return eval_fn(state)
         v = infinity
         for (a, s) in game.successors(state):
-            v = min(v, max_value(s, alpha, beta, depth+1))
+            v = min(v, max_value(s, alpha, beta, depth + 1))
             if v <= alpha:
                 return v
             beta = min(beta, v)
@@ -110,6 +106,7 @@ def alphabeta_search(state, game, d=4, cutoff_test=None, eval_fn=None):
                            lambda ((a, s)): min_value(s, -infinity, infinity, 0))
     return action
 
+
 # ______________________________________________________________________________
 # Players for Games
 
@@ -118,16 +115,19 @@ def query_player(game, state):
     # game.display(state)
     return num_or_str(raw_input('Your move? '))
 
+
 def random_player(game, state):
     """A player that chooses a legal move at random."""
     game.display(state)
     print "The random_player play with: ", state.to_move
     return random.choice(game.legal_moves(state))
 
+
 def alphabeta_player(game, state):
     game.display(state)
     print "The alphabeta_player play with: ", state.to_move
     return alphabeta_search(state, game)
+
 
 def play_game(game, *players):
     """Play an n-person, move-alternating game."""
@@ -140,6 +140,7 @@ def play_game(game, *players):
             if game.terminal_test(state):
                 print game.display(state)
                 return game.utility(state, 'X')
+
 
 # ______________________________________________________________________________
 # Some Sample Games
@@ -180,7 +181,7 @@ class Game:
     def successors(self, state):
         """Return a list of legal (move, state) pairs."""
         sucesores = [(move, self.make_move(move, state))
-                for move in self.legal_moves(state)]
+                     for move in self.legal_moves(state)]
         return sucesores
 
     def __repr__(self):
@@ -192,10 +193,11 @@ class TicTacToe(Game):
     A state has the player to move, a cached utility, a list of moves in
     the form of a list of (x, y) positions, and a board, in the form of
     a dict of {(x, y): Player} entries, where Player is 'X' or 'O'."""
+
     def __init__(self, h=3, v=3, k=3):
         update(self, h=h, v=v, k=k)
-        moves = [(x, y) for x in range(1, h+1)
-                 for y in range(1, v+1)]
+        moves = [(x, y) for x in range(1, h + 1)
+                 for y in range(1, v + 1)]
         self.initial = Struct(to_move='X', utility=0, board={}, moves=moves)
 
     def legal_moves(self, state):
@@ -219,7 +221,6 @@ class TicTacToe(Game):
             return state.utility
         if player == 'O':
             return -state.utility
-        # return state.utility
 
     def terminal_test(self, state):
         """A state is terminal if it is won or there are no empty squares."""
@@ -227,8 +228,8 @@ class TicTacToe(Game):
 
     def display(self, state):
         board = state.board
-        for x in range(1, self.h+1):
-            for y in range(1, self.v+1):
+        for x in range(1, self.h + 1):
+            for y in range(1, self.v + 1):
                 print board.get((x, y), '.'),
             print
 
@@ -269,7 +270,7 @@ class ConnectFour(TicTacToe):
     def legal_moves(self, state):
         """Legal moves are any square not yet taken."""
         currents = []
-        for column in range(1, self.v+1):
+        for column in range(1, self.v + 1):
             for row in xrange(self.h, 0, -1):
                 if (row, column) not in state.board:
                     currents.append(column)
@@ -278,11 +279,11 @@ class ConnectFour(TicTacToe):
 
     def display(self, state):
         board = state.board
-        for i in range(1, self.v+1):
+        for i in range(1, self.v + 1):
             print i,
         print
-        for x in range(1, self.h+1):
-            for y in range(1, self.v+1):
+        for x in range(1, self.h + 1):
+            for y in range(1, self.v + 1):
                 print board.get((x, y), '.'),
             print
 
